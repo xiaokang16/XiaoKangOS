@@ -13,7 +13,7 @@ echo ""
 check_dependencies() {
     echo "[1/6] Checking build dependencies..."
     
-    local deps=("make" "gcc" "bc" "bison" "flex" "libssl-dev" "xorriso" "genisoimage")
+    local deps=("make" "gcc" "bc" "bison" "flex" "xorriso" "genisoimage")
     local missing=()
     
     for dep in "${deps[@]}"; do
@@ -76,7 +76,7 @@ build_kernel() {
     fi
     
     echo "Compiling kernel (this may take a while)..."
-    make -j"${MAKE_JOBS}" ARCH="${ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" zImage modules
+    make -j"${MAKE_JOBS}" ARCH="${ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" bzImage modules
     
     echo "Installing modules to staging..."
     make ARCH="${ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" INSTALL_MOD_PATH="${OUTPUT_DIR}/rootfs" modules_install
@@ -119,14 +119,15 @@ build_iso() {
     
     local iso_dir="${OUTPUT_DIR}/iso"
     local rootfs="${OUTPUT_DIR}/rootfs"
+    local iso_output="${OUTPUT_DIR}/XiaoKangOS.iso"
     
     echo "Preparing ISO structure..."
     mkdir -p "${iso_dir}/boot"
     mkdir -p "${iso_dir}/boot/grub"
-    mkdir -p "${iso_dir}/casper"
     
     cp "${OUTPUT_DIR}/vmlinuz" "${iso_dir}/boot/"
     
+    # 创建 GRUB 配置文件
     cat > "${iso_dir}/boot/grub/grub.cfg" << 'EOF'
 set default=0
 set timeout=0
@@ -142,27 +143,17 @@ EOF
     find . -print | cpio -o -H newc 2>/dev/null | gzip -9 > "${iso_dir}/boot/initrd.img"
     
     echo "Creating SquashFS..."
-    mksquashfs "${rootfs}" "${iso_dir}/casper/filesystem.squashfs" -comp xz -e boot
+    mkdir -p "${iso_dir}/casper"
+mksquashfs "${rootfs}" "${iso_dir}/casper/filesystem.squashfs" -comp xz -e boot -noappend
     
-    echo "Creating ISO image..."
-    xorriso -as mkisofs \
-        -iso-level 3 \
-        -full-iso9660-filenames \
-        -volid "${ISO_VOLUME}" \
-        -publisher "${ISO_PUBLISHER}" \
-        -app-id "XiaoKangOS" \
-        -output "${OUTPUT_DIR}/XiaoKangOS.iso" \
-        -eltorito-boot boot/grub/bios.img \
-        -no-emul-boot \
-        -boot-load-size 4 \
-        -boot-info-table \
-        "${iso_dir}"
+    echo "Creating ISO image with grub-mkrescue..."
+    grub-mkrescue -o "${iso_output}" "${iso_dir}" -- -volid "${ISO_VOLUME}"
     
     echo "========================================="
     echo "  Build Complete!"
     echo "========================================="
-    echo "ISO: ${OUTPUT_DIR}/XiaoKangOS.iso"
-    ls -lh "${OUTPUT_DIR}/XiaoKangOS.iso"
+    echo "ISO: ${iso_output}"
+    ls -lh "${iso_output}"
 }
 
 main() {
