@@ -374,7 +374,7 @@ systemd服务启动 → 网络初始化
 
 - **GitHub Issues**：问题反馈
 - **文档**：项目文档
-- **Email**：support@xiaokangos.example.com（预留）
+- **Email**：xiaokangos@outlook.com
 
 ## 📄 许可证
 
