@@ -10,7 +10,7 @@ BROWSER_DIR="${PROJECT_ROOT}/browser"
 WEB_FRONTEND="${PROJECT_ROOT}/web/frontend"
 WEB_BACKEND="${PROJECT_ROOT}/web/backend"
 KERNEL_MODULE="${PROJECT_ROOT}/kernel-module"
-OUTPUT_DIR="${PROJECT_ROOT Build}/output"
+OUTPUT_DIR="${PROJECT_ROOT}/output"
 
 # settings
 ARCH="x86_64"
