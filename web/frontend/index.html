@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XiaoKangOS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <header class="taskbar">
+            <div class="taskbar-left">
+                <div class="logo">
+                    <span class="logo-icon">⚡</span>
+                    <span class="logo-text">XiaoKangOS</span>
+                </div>
+            </div>
+            <div class="taskbar-center">
+                <nav class="nav-tabs">
+                    <button class="nav-tab active" data-section="dashboard">
+                        <span class="tab-icon">📊</span>
+                        <span class="tab-text">仪表盘</span>
+                    </button>
+                    <button class="nav-tab" data-section="files">
+                        <span class="tab-icon">📁</span>
+                        <span class="tab-text">文件管理</span>
+                    </button>
+                    <button class="nav-tab" data-section="processes">
+                        <span class="tab-icon">⚙️</span>
+                        <span class="tab-text">进程管理</span>
+                    </button>
+                    <button class="nav-tab" data-section="settings">
+                        <span class="tab-icon">⚡</span>
+                        <span class="tab-text">设置</span>
+                    </button>
+                </nav>
+            </div>
+            <div class="taskbar-right">
+                <div class="system-status">
+                    <span class="status-item" id="cpu-status">
+                        <span class="status-icon">🖥️</span>
+                        <span class="status-value" id="cpu-usage">0%</span>
+                    </span>
+                    <span class="status-item" id="memory-status">
+                        <span class="status-icon">💾</span>
+                        <span class="status-value" id="memory-usage">0%</span>
+                    </span>
+                    <span class="status-item" id="network-status">
+                        <span class="status-icon">🌐</span>
+                        <span class="status-value" id="network-status-text">离线</span>
+                    </span>
+                </div>
+                <div class="system-time" id="system-time">00:00:00</div>
+            </div>
+        </header>
+
+        <main class="content">
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h1>系统仪表盘</h1>
+                    <p class="section-subtitle">实时监控系统状态</p>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card system-info">
+                        <div class="card-header">
+                            <span class="card-icon">🖥️</span>
+                            <h3>系统信息</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="info-row">
+                                <span class="info-label">操作系统</span>
+                                <span class="info-value" id="os-name">XiaoKangOS</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">内核版本</span>
+                                <span class="info-value" id="kernel-version">加载中...</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">运行时间</span>
+                                <span class="info-value" id="uptime">加载中...</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">主机名</span>
+                                <span class="info-value" id="hostname">加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card cpu-monitor">
+                        <div class="card-header">
+                            <span class="card-icon">⚡</span>
+                            <h3>CPU 使用率</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="gauge-container">
+                                <svg class="gauge" viewBox="0 0 120 120">
+                                    <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+                                    <circle class="gauge-fill" cx="60" cy="60" r="50" id="cpu-gauge"/>
+                                    <text class="gauge-text" x="60" y="60" id="cpu-gauge-text">0%</text>
+                                </svg>
+                            </div>
+                            <div class="cpu-cores" id="cpu-cores"></div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card memory-monitor">
+                        <div class="card-header">
+                            <span class="card-icon">💾</span>
+                            <h3>内存使用</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="gauge-container">
+                                <svg class="gauge" viewBox="0 0 120 120">
+                                    <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+                                    <circle class="gauge-fill memory-gauge" cx="60" cy="60" r="50" id="memory-gauge"/>
+                                    <text class="gauge-text" x="60" y="60" id="memory-gauge-text">0%</text>
+                                </svg>
+                            </div>
+                            <div class="memory-details">
+                                <div class="info-row">
+                                    <span class="info-label">总内存</span>
+                                    <span class="info-value" id="total-memory">加载中...</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">已用内存</span>
+                                    <span class="info-value" id="used-memory">加载中...</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">可用内存</span>
+                                    <span class="info-value" id="free-memory">加载中...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card storage-monitor">
+                        <div class="card-header">
+                            <span class="card-icon">💿</span>
+                            <h3>存储空间</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="storage-bars" id="storage-bars"></div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card network-monitor">
+                        <div class="card-header">
+                            <span class="card-icon">🌐</span>
+                            <h3>网络状态</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="network-info" id="network-info">
+                                <div class="info-row">
+                                    <span class="info-label">连接状态</span>
+                                    <span class="info-value network-status" id="net-connection">离线</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">IP地址</span>
+                                    <span class="info-value" id="ip-address">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">上传速度</span>
+                                    <span class="info-value" id="upload-speed">0 KB/s</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">下载速度</span>
+                                    <span class="info-value" id="download-speed">0 KB/s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card hardware-monitor">
+                        <div class="card-header">
+                            <span class="card-icon">🔧</span>
+                            <h3>硬件信息</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="hardware-list" id="hardware-list">
+                                <div class="hardware-item">
+                                    <span class="hardware-icon">🔲</span>
+                                    <div class="hardware-info">
+                                        <span class="hardware-name">CPU</span>
+                                        <span class="hardware-value" id="hardware-cpu">加载中...</span>
+                                    </div>
+                                </div>
+                                <div class="hardware-item">
+                                    <span class="hardware-icon">🎮</span>
+                                    <div class="hardware-info">
+                                        <span class="hardware-name">GPU</span>
+                                        <span class="hardware-value" id="hardware-gpu">加载中...</span>
+                                    </div>
+                                </div>
+                                <div class="hardware-item">
+                                    <span class="hardware-icon">📺</span>
+                                    <div class="hardware-info">
+                                        <span class="hardware-name">显示器</span>
+                                        <span class="hardware-value" id="hardware-display">加载中...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="files" class="section">
+                <div class="section-header">
+                    <h1>文件管理器</h1>
+                    <p class="section-subtitle">浏览和管理系统文件</p>
+                </div>
+                <div class="file-manager">
+                    <div class="file-toolbar">
+                        <button class="toolbar-btn" id="btn-back" title="返回">
+                            <span>⬆️</span> 返回
+                        </button>
+                        <button class="toolbar-btn" id="btn-refresh" title="刷新">
+                            <span>🔄</span> 刷新
+                        </button>
+                        <div class="breadcrumb" id="breadcrumb">
+                            <span class="breadcrumb-item" data-path="/">根目录</span>
+                        </div>
+                    </div>
+                    <div class="file-content">
+                        <div class="file-list-header">
+                            <span class="col-name">名称</span>
+                            <span class="col-size">大小</span>
+                            <span class="col-modified">修改时间</span>
+                            <span class="col-permissions">权限</span>
+                        </div>
+                        <div class="file-list" id="file-list">
+                            <div class="loading">加载中...</div>
+                        </div>
+                    </div>
+                    <div class="file-details" id="file-details">
+                        <div class="details-header">
+                            <h3>文件详情</h3>
+                        </div>
+                        <div class="details-content">
+                            <div class="info-row">
+                                <span class="info-label">文件名</span>
+                                <span class="info-value" id="detail-name">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">路径</span>
+                                <span class="info-value" id="detail-path">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">大小</span>
+                                <span class="info-value" id="detail-size">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">类型</span>
+                                <span class="info-value" id="detail-type">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">权限</span>
+                                <span class="info-value" id="detail-permissions">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="processes" class="section">
+                <div class="section-header">
+                    <h1>进程管理器</h1>
+                    <p class="section-subtitle">监控系统进程和性能</p>
+                </div>
+                <div class="process-manager">
+                    <div class="process-toolbar">
+                        <div class="process-stats">
+                            <span class="stat-item">
+                                <span class="stat-label">总进程数</span>
+                                <span class="stat-value" id="total-processes">0</span>
+                            </span>
+                            <span class="stat-item">
+                                <span class="stat-label">运行中</span>
+                                <span class="stat-value" id="running-processes">0</span>
+                            </span>
+                            <span class="stat-item">
+                                <span class="stat-label">CPU使用</span>
+                                <span class="stat-value" id="process-cpu">0%</span>
+                            </span>
+                            <span class="stat-item">
+                                <span class="stat-label">内存使用</span>
+                                <span class="stat-value" id="process-memory">0%</span>
+                            </span>
+                        </div>
+                        <div class="process-actions">
+                            <button class="action-btn refresh-btn" id="refresh-processes">
+                                <span>🔄</span> 刷新
+                            </button>
+                            <button class="action-btn" id="kill-selected" disabled>
+                                <span>⛔</span> 结束进程
+                            </button>
+                        </div>
+                    </div>
+                    <div class="process-list-container">
+                        <div class="process-list-header">
+                            <span class="col-pid">PID</span>
+                            <span class="col-pname">进程名称</span>
+                            <span class="col-pcpu">CPU %</span>
+                            <span class="col-pmem">内存 %</span>
+                            <span class="col-pstatus">状态</span>
+                            <span class="col-puser">用户</span>
+                        </div>
+                        <div class="process-list" id="process-list">
+                            <div class="loading">加载中...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settings" class="section">
+                <div class="section-header">
+                    <h1>系统设置</h1>
+                    <p class="section-subtitle">配置系统选项</p>
+                </div>
+                <div class="settings-container">
+                    <div class="settings-group">
+                        <h3>显示设置</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">深色模式</span>
+                                <span class="setting-description">使用深色主题</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="dark-mode" checked disabled>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">动画效果</span>
+                                <span class="setting-description">启用过渡动画</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="animations" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>系统设置</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">自动刷新</span>
+                                <span class="setting-description">自动更新系统信息</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="auto-refresh" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">刷新间隔</span>
+                                <span class="setting-description">系统信息更新频率(秒)</span>
+                            </div>
+                            <select class="select-input" id="refresh-interval">
+                                <option value="1">1秒</option>
+                                <option value="2" selected>2秒</option>
+                                <option value="5">5秒</option>
+                                <option value="10">10秒</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>网络设置</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">网络自动连接</span>
+                                <span class="setting-description">启动时自动连接网络</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="auto-network" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>关于</h3>
+                        <div class="about-info">
+                            <div class="about-logo">⚡</div>
+                            <div class="about-title">XiaoKangOS</div>
+                            <div class="about-version">版本 1.0.0</div>
+                            <div class="about-description">
+                                一个现代化的Web操作系统界面
+                            </div>
+                            <div class="about-copyright">
+                                © 2024 XiaoKangOS Team
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div class="toast-container" id="toast-container"></div>
+    </div>
+
+    <script src="xiao-api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
